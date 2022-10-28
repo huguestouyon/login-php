@@ -20,13 +20,13 @@ try {
 			$user = $statement->fetch();
 			if ($user && password_verify($_POST['pass'], $user['pass'])) {
 				$_SESSION['user'] = $_POST['username'];
-				if (!isset($_SESSION['CREATED'])) {
-					$_SESSION['CREATED'] = time();
-				} else if (time() - $_SESSION['CREATED'] > 1800) {
-					// session started more than 30 minutes ago
-					session_regenerate_id(true);    // change session ID for the current session and invalidate old session ID
-					$_SESSION['CREATED'] = time();  // update creation time
-				}
+				// if (!isset($_SESSION['CREATED'])) {
+				// 	$_SESSION['CREATED'] = time();
+				// } else if (time() - $_SESSION['CREATED'] > 1800) {
+				// 	// session started more than 30 minutes ago
+				// 	session_regenerate_id(true);    // change session ID for the current session and invalidate old session ID
+				// 	$_SESSION['CREATED'] = time();  // update creation time
+				// }
 			} else {
 				$response = "Données fausses";
 			}
@@ -84,7 +84,7 @@ try {
 							<a class="nav-link" href="#">Home</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="admin.php">Administration</a>
+							<a class="nav-link" href="admin.php">Ajouter</a>
 						</li>
 					</ul>
 				</div>

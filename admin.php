@@ -1,6 +1,35 @@
 <?php
 session_start();
+$response = "";
 if(isset($_SESSION["user"])) {
+    if (isset($_POST["submit"])) {
+// si le pseudo et le mot de pass1 et 2 existe && que le mdp est === au mdp 2 && que le pseudo est différent du mdp
+        if(!empty($_POST["pseudo"]) && !empty($_POST["pass"]) && !empty($_POST["pass2"]) && $_POST["pass"]===$_POST["pass2"] && $_POST["pass"]!==$_POST["pseudo"]) {
+            $host = "localhost";
+            $username = "root";
+            $password = "root";
+            $db = "member";
+            $dbh = new PDO("mysql:host=$host; dbname=$db", $username, $password);
+            $query = "SELECT * FROM users WHERE username = ?";
+            $statement = $dbh->prepare($query);
+            $statement->execute([$_POST['pseudo']]);
+			$user = $statement->fetch();
+            if($user === false) {
+                $pseudo = $_POST["pseudo"];
+                $password = password_hash($_POST["pass"], PASSWORD_DEFAULT);
+                $query = "INSERT INTO users (username, pass) VALUES ('$pseudo','$password')";
+                $statement = $dbh->prepare($query);
+                $statement->execute();
+                $response = "Compte ajouté avec succès !";
+            }
+            else {
+                $response = "Nom déjà utilisé";
+            }
+        }
+        else {
+            $response = "Valeurs manquantes ou mot de passe différent";
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +76,7 @@ if(isset($_SESSION["user"])) {
                             <a class="nav-link" href="index.php">Home</a>
                         </li>
                         <li class="nav-item active">
-                            <a class="nav-link" href="admin.php">Administration</a>
+                            <a class="nav-link" href="admin.php">Ajouter</a>
                         </li>
                     </ul>
                 </div>
@@ -71,7 +100,7 @@ if(isset($_SESSION["user"])) {
 						</div>
 
 						<div class="wrap-input100 validate-input" data-validate="Enter password">
-							<input class="input100" type="password" name="pass" placeholder="Retaper">
+							<input class="input100" type="password" name="pass2" placeholder="Retaper">
 							<span class="focus-input100" data-placeholder="&#xe80f;"></span>
 						</div>
 						<?php
@@ -80,7 +109,7 @@ if(isset($_SESSION["user"])) {
 						}
 						?>
 						<div class="container-login100-form-btn m-t-3">
-
+                        
 							<input type="submit" class="login100-form-btn mt-5" name="submit" value="Envoyer">
 						</div>
 					</form>
@@ -88,6 +117,6 @@ if(isset($_SESSION["user"])) {
         </div>
     </div>
 </body>
-<?php 
+<?php
 }
 ?>
